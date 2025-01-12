@@ -1,0 +1,24 @@
+<script>
+function handleElementClick(elementId) {
+    // Prevent default link behavior
+    event.preventDefault();
+    
+    // Make AJAX call
+    fetch(`/api/get-element/${elementId}/`)
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response data here
+            console.log(data);
+            // Update your UI as needed
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+// Add click event listeners to your elements
+document.querySelectorAll('.your-element-class').forEach(element => {
+    element.addEventListener('click', (e) => {
+        e.preventDefault();
+        handleElementClick(element.dataset.elementId);
+    });
+});
+</script>
