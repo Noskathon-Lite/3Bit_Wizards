@@ -1,8 +1,21 @@
-import React from 'react'
+import React, { Children } from 'react'
 
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+
+import Login from './page/Login';
+const router=createBrowserRouter(
+  [
+  
+        {
+          path:'/',
+          element:<Login/>
+        }
+    
+      ]
+)
 const App = () => {
   return (
-    <div className='text-red-600'>App</div>
+    <RouterProvider router={router}/>
   )
 }
 
