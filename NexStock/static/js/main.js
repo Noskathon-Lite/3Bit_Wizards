@@ -316,4 +316,34 @@
     }, 200);
   }
 
-})();
+  /**
+   * Handle element navigation
+   */
+  const handleElementNavigation = () => {
+    const elementLinks = select('.element-link', true);
+    if (elementLinks) {
+      elementLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const elementId = link.dataset.elementId;
+          // Use history.pushState to update URL without page reload
+          const newUrl = `/inventory/api/get-element/${elementId}/`;
+          history.pushState({}, '', newUrl);
+          
+          // Make AJAX request to get element data
+          fetch(newUrl)
+            .then(response => response.json())
+            .then(data => {
+              // Handle the element data update here
+              // This prevents the double URL issue
+            })
+            .catch(error => console.error('Error:', error));
+        });
+      });
+    }
+  }
+
+  // Initialize element navigation
+  handleElementNavigation();
+
+})(); // End of IIFE

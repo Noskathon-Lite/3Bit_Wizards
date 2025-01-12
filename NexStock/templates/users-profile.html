@@ -30,13 +30,6 @@
   <!-- Template Main CSS File -->
   <link href="{% static 'css/style.css' %}" rel="stylesheet">
 
-  <!-- =======================================================
-  * Template Name: NiceAdmin
-  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-  * Updated: Apr 20 2024 with Bootstrap v5.3.3
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
 </head>
 
 <body>
@@ -272,7 +265,7 @@
   <ul class="sidebar-nav" id="sidebar-nav">
 
     <li class="nav-item">
-      <a class="nav-link " href="index.html">
+      <a class="nav-link " href="{% url 'index' %}">
         <i class="bi bi-grid"></i>
         <span>Dashboard</span>
       </a>
@@ -286,7 +279,7 @@
       <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
      
         <li>
-          <a href="forms-layouts.html">
+          <a href="{% url 'forms_layouts' %}">
             <i class="bi bi-circle"></i><span>Add</span>
           </a>
         </li>
@@ -301,7 +294,7 @@
       <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
       
         <li>
-          <a href="tables-data.html">
+          <a href="{% url 'tables_data' %}">
             <i class="bi bi-circle"></i><span>Data Tables</span>
           </a>
         </li>
@@ -314,7 +307,7 @@
       </a>
       <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li>
-          <a href="charts-chartjs.html">
+          <a href="{% url 'charts_chartjs' %}">
             <i class="bi bi-circle"></i><span>Chart.js</span>
           </a>
         </li>
@@ -326,7 +319,7 @@
     <li class="nav-heading">Pages</li>
 
     <li class="nav-item">
-      <a class="nav-link collapsed" href="users-profile.html">
+      <a class="nav-link collapsed" href="{% url 'users_profile' %}">
         <i class="bi bi-person"></i>
         <span>Profile</span>
       </a>
@@ -335,21 +328,21 @@
 
 
     <li class="nav-item">
-      <a class="nav-link collapsed" href="pages-contact.html">
+      <a class="nav-link collapsed" href="{% url 'contact' %}">
         <i class="bi bi-envelope"></i>
         <span>Contact</span>
       </a>
     </li><!-- End Contact Page Nav -->
 
     <li class="nav-item">
-      <a class="nav-link collapsed" href="pages-register.html">
+      <a class="nav-link collapsed" href="{% url 'pages_register' %}">
         <i class="bi bi-card-list"></i>
         <span>Register</span>
       </a>
     </li><!-- End Register Page Nav -->
 
     <li class="nav-item">
-      <a class="nav-link collapsed" href="pages-login.html">
+      <a class="nav-link collapsed" href="{% url 'pages_login' %}">
         <i class="bi bi-box-arrow-in-right"></i>
         <span>Login</span>
       </a>
