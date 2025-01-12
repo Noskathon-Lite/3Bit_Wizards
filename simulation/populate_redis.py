@@ -1,73 +1,71 @@
 import redis
-import json
-from datetime import datetime
+from faker import Faker
+import random
+import hashlib
 
-# Connect to Redis
-redis_host = "localhost"
-redis_port = 6379
-redis_db = 0
+# Establishing the Redis connection
+r = redis.Redis(host='localhost', port=6379, db=0)
 
-try:
-    # Create a Redis connection
-    r = redis.StrictRedis(host=redis_host, port=redis_port, db=redis_db, decode_responses=True)
+# Initialize Faker to generate fake data
+faker = Faker()
 
-    # Helper function to add data to Redis
-    def create_inventory_item(item_id, item_name, company_name, category, stock_quantity, reorder_level):
-        inventory_key = f"inventory:{item_id}"
-        inventory_data = {
-            "item_id": item_id,
-            "item_name": item_name,
-            "company_name": company_name,
-            "category": category,
-            "stock_quantity": stock_quantity,
-            "reorder_level": reorder_level,
-            "created_at": str(datetime.now()),
-            "updated_at": str(datetime.now())
-        }
-        r.hset(inventory_key, mapping=inventory_data)  # Store the item in Redis as a hash
+# Lists of categories, companies, and item names
+categories = ['Electronics', 'Clothing', 'Groceries', 'Furniture', 'Toys', 'Sports', 'Books', 'Beauty']
+companies = ['Apple', 'Samsung', 'Nike', 'Sony', 'LG', 'Adidas', 'IKEA', 'Amazon', 'Walmart']
 
-    def create_inventory_transaction(transaction_id, item_id, transaction_type, quantity, notes):
-        transaction_key = f"transaction:{transaction_id}"
-        transaction_data = {
-            "transaction_id": transaction_id,
-            "item_id": item_id,
-            "transaction_type": transaction_type,
-            "quantity": quantity,
-            "transaction_date": str(datetime.now()),
-            "notes": notes
-        }
-        r.hset(transaction_key, mapping=transaction_data)  # Store the transaction in Redis as a hash
+item_names = {
+    'Electronics': ['Laptop', 'Smartphone', 'Tablet', 'Headphones', 'Smartwatch', 'TV', 'Camera', 'Speaker'],
+    'Clothing': ['T-shirt', 'Jeans', 'Jacket', 'Sweater', 'Skirt', 'Dress', 'Shoes', 'Scarf'],
+    'Groceries': ['Rice', 'Wheat Flour', 'Sugar', 'Salt', 'Tea', 'Coffee', 'Milk', 'Butter'],
+    'Furniture': ['Sofa', 'Chair', 'Table', 'Cupboard', 'Bed', 'Dresser', 'Shelf', 'Armchair'],
+    'Toys': ['Lego', 'Action Figure', 'Doll', 'Puzzle', 'Board Game', 'Teddy Bear', 'Car Toy', 'Drone'],
+    'Sports': ['Football', 'Basketball', 'Tennis Racket', 'Baseball Bat', 'Golf Club', 'Badminton Racket', 'Soccer Ball', 'Table Tennis Paddle'],
+    'Books': ['Novel', 'Textbook', 'Magazine', 'Biography', 'Cookbook', 'Comic', 'Poetry', 'Guidebook'],
+    'Beauty': ['Shampoo', 'Conditioner', 'Lipstick', 'Perfume', 'Body Lotion', 'Face Mask', 'Nail Polish', 'Hair Gel']
+}
 
-    def create_sale(sale_id, item_id, quantity, price):
-        sale_key = f"sale:{sale_id}"
-        sale_data = {
-            "sale_id": sale_id,
-            "item_id": item_id,
-            "quantity": quantity,
-            "sale_date": str(datetime.now()),
-            "price": price
-        }
-        r.hset(sale_key, mapping=sale_data)  # Store the sale in Redis as a hash
+def generate_item_id(category, item_name, company_name):
+    """
+    Generate a consistent unique item_id based on category, item name, and company name.
+    """
+    unique_string = f"{category}:{item_name}:{company_name}"
+    return hashlib.sha256(unique_string.encode()).hexdigest()[:16]  # Truncate for brevity
 
-    def create_prediction(prediction_id, item_id, predicted_depletion_date, current_quantity, confidence):
-        prediction_key = f"prediction:{prediction_id}"
-        prediction_data = {
-            "prediction_id": prediction_id,
-            "item_id": item_id,
-            "predicted_depletion_date": str(predicted_depletion_date),
-            "current_quantity": current_quantity,
-            "confidence": confidence,
-            "created_at": str(datetime.now())
-        }
-        r.hset(prediction_key, mapping=prediction_data)  # Store the prediction in Redis as a hash
+# Function to populate the inventory in Redis
+def populate_inventory(r):
+    # Clear the existing inventory (redis doesn't have a "truncate", so we manually remove keys)
+    for key in r.scan_iter("inventory:*"):
+        r.delete(key)
 
-    # Sample data (these would typically come from elsewhere)
-    create_inventory_item(1, "Item A", "Company A", "Category 1", 100, 20)
-    create_inventory_transaction(1, 1, "restock", 50, "Restocked due to low stock")
-    create_sale(1, 1, 10, 19.99)
-    create_prediction(1, 1, "2025-01-01", 80, 0.95)
+    # Loop through each category
+    for category in categories:
+        # Get the list of items for this category
+        items_in_category = item_names.get(category, [])
 
-    print("Data inserted successfully into Redis!")
+        # For each item, link it to all brands
+        for item_name in items_in_category:
+            for company_name in companies:
+                # Generate a unique item_id for each item-brand combination
+                item_id = generate_item_id(category, item_name, company_name)
 
-except Exception as e:
-    print(f"Error: {e}")
+                # Generate a unique key for each item
+                item_key = f"inventory:{item_id}"
+
+                # Generate random stock quantity and reorder level
+                stock_quantity = random.randint(10, 1000)
+                reorder_level = random.randint(5, 100)
+
+                # Use a hash in Redis to store the item's data
+                r.hset(item_key, mapping={
+                    "item_id": item_id,
+                    "category": category,
+                    "item_name": item_name,
+                    "company_name": company_name,
+                    "stock_quantity": stock_quantity,
+                    "reorder_level": reorder_level
+                })
+
+    print(f"Inventory populated with {sum(len(items) * len(companies) for items in item_names.values())} items.")
+
+# Call the function to populate the inventory
+populate_inventory(r)
