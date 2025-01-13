@@ -1,6 +1,5 @@
 from django.urls import path
 from . import views
-
 urlpatterns = [
     path('', views.index, name='index'),
     path('pages-contact/', views.contact, name='contact'),
@@ -9,8 +8,5 @@ urlpatterns = [
     path('charts-chartjs/', views.charts_chartjs, name='charts_chartjs'),
     path('users-profile/', views.users_profile, name='users_profile'),
     path('pages-register/', views.pages_register, name='pages_register'),
-    path('pages-login/', views.pages_login, name='pages_login'),
-    path('api/update-element/', views.update_element, name='update_element'),
-    path('api/get-element/<int:element_id>/', views.get_element, name='get_element'),
-    path('pages-contact/tables-data.html',views.tables_data),
+    path('pages-login/', views.pages_login, name='pages_login')
 ]

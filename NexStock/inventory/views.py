@@ -25,19 +25,3 @@ def pages_register(request):
 
 def pages_login(request):
     return render(request, 'pages-login.html')
-
-def update_element(request):
-    if request.method == 'POST':
-        element_id = request.POST.get('element_id')
-        # Process your element update logic here
-        return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'error'}, status=400)
-
-def get_element(request, element_id):
-    # Fetch element data based on element_id
-    # Replace with your actual model and logic
-    data = {
-        'element_id': element_id,
-        # Add other element data
-    }
-    return JsonResponse(data)
